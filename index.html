@@ -1,4 +1,138 @@
-/* Mx="0" aria-roledescription="3D-Karussell">
+Themenblog Mit Eigenen Artikeln · html
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Themenblog</title>
+<meta name="description" content="Blog mit dreidimensionalem WebGL-Themen-Karussell">
+<style>
+  :root {
+    --bg: #f5f3ee;
+    --surface: #ffffff;
+    --text: #1d1b17;
+    --muted: #6b665c;
+    --line: #e3dfd6;
+    --accent: #c2410c;
+    --stage-a: #e9e4da;
+    --stage-b: #f5f3ee;
+    --shadow: 0 10px 30px rgba(30, 25, 15, .10);
+    --radius: 18px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141311; --surface: #1f1d1a; --text: #f1ede6; --muted: #a39d92;
+      --line: #2f2c27; --accent: #fb923c; --stage-a: #1c1a17; --stage-b: #141311;
+      --shadow: 0 10px 30px rgba(0, 0, 0, .45);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #141311; --surface: #1f1d1a; --text: #f1ede6; --muted: #a39d92;
+    --line: #2f2c27; --accent: #fb923c; --stage-a: #1c1a17; --stage-b: #141311;
+    --shadow: 0 10px 30px rgba(0, 0, 0, .45);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.6;
+  }
+
+  header { padding: 44px 16px 8px; max-width: 1100px; margin: 0 auto; }
+  .eyebrow { text-transform: uppercase; letter-spacing: .18em; font-size: .75rem; color: var(--accent); font-weight: 600; margin: 0 0 8px; }
+  h1 { font-family: Georgia, "Times New Roman", serif; font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.1; margin: 0 0 12px; letter-spacing: -.01em; }
+  header p { margin: 0; color: var(--muted); max-width: 560px; }
+
+  /* ---------- 3D-Bühne ---------- */
+  .carousel { max-width: 1100px; margin: 0 auto; }
+  .carousel-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 16px 8px; }
+  .carousel-head h2 { margin: 0; font-size: 1rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-weight: 600; }
+  .nav-btns { display: flex; gap: 8px; }
+  .nav-btn {
+    width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--line);
+    background: var(--surface); color: var(--text); cursor: pointer; display: grid; place-items: center;
+    transition: transform .15s ease, background .15s ease;
+  }
+  .nav-btn:hover { transform: scale(1.06); background: var(--accent); color: #fff; border-color: var(--accent); }
+  .nav-btn svg { width: 18px; height: 18px; }
+
+  .stage {
+    position: relative; height: 520px; margin: 0 16px;
+    border-radius: var(--radius); overflow: hidden;
+    background: radial-gradient(ellipse at 50% 70%, var(--stage-a), var(--stage-b) 70%);
+    border: 1px solid var(--line);
+    touch-action: pan-y;
+  }
+  .stage canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+  .stage.dragging canvas { cursor: grabbing; }
+  .stage .hint {
+    position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
+    font-size: .75rem; color: var(--muted); letter-spacing: .08em; text-transform: uppercase;
+    pointer-events: none; opacity: .8;
+  }
+  .stage .fallback { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); padding: 24px; text-align: center; }
+  .stage .label {
+    position: absolute; top: 16px; left: 50%; transform: translateX(-50%);
+    background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+    padding: 6px 14px; font-size: .8rem; font-weight: 600; pointer-events: none;
+    box-shadow: var(--shadow); white-space: nowrap;
+  }
+
+  .dots { display: flex; justify-content: center; gap: 6px; padding: 16px 16px 8px; flex-wrap: wrap; }
+  .dot { width: 8px; height: 8px; border-radius: 999px; border: 0; padding: 0; cursor: pointer; background: var(--line); transition: width .25s ease, background .25s ease; }
+  .dot.active { width: 26px; background: var(--accent); }
+
+  /* ---------- Artikel ---------- */
+  main { max-width: 760px; margin: 32px auto 80px; padding: 0 16px; }
+  article { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(24px, 5vw, 48px); animation: fadeIn .35s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .tag { display: inline-block; font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #fff; background: var(--c1); padding: 4px 10px; border-radius: 999px; margin-bottom: 14px; }
+  article h2 { font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.6rem, 4vw, 2.4rem); line-height: 1.15; margin: 0 0 8px; }
+  .byline { color: var(--muted); font-size: .9rem; margin: 0 0 24px; }
+  article p { margin: 0 0 18px; }
+  article p.lead::first-letter { font-family: Georgia, serif; font-size: 3.2em; float: left; line-height: .85; padding-right: 8px; color: var(--accent); }
+  blockquote { margin: 24px 0; padding: 4px 0 4px 18px; border-left: 4px solid var(--c1); color: var(--muted); font-style: italic; }
+  .article-signature { margin-top: 28px; padding-top: 14px; border-top: 1px dashed var(--line); color: var(--muted); font-size: .8rem; text-align: right; }
+  .article-nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--line); }
+  .article-nav button { flex: 1; background: none; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; color: var(--text); cursor: pointer; font: inherit; text-align: left; transition: border-color .15s ease; }
+  .article-nav button:hover { border-color: var(--accent); }
+  .article-nav button small { display: block; color: var(--muted); font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; }
+  .article-nav button:last-child { text-align: right; }
+
+  footer { text-align: center; color: var(--muted); font-size: .85rem; padding: 0 16px 40px; }
+  footer .credits { margin-top: 8px; font-size: .78rem; line-height: 1.8; }
+
+  @media (max-width: 600px) {
+    .stage { height: 420px; }
+  }
+</style>
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+</script>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Themenblog</p>
+  <h1>Zehn Themen, ein Ring.</h1>
+  <p>Drehe das Karussell mit der Maus, dem Mausrad oder den Pfeilen. Ein Klick auf eine Karte öffnet den Beitrag darunter.</p>
+</header>
+
+<section class="carousel" aria-label="Themen">
+  <div class="carousel-head">
+    <h2>Themen</h2>
+    <div class="nav-btns">
+      <button class="nav-btn" id="prev" aria-label="Zurück">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button class="nav-btn" id="next" aria-label="Weiter">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="stage" id="stage" tabindex="0" aria-roledescription="3D-Karussell">
     <div class="label" id="label"></div>
     <div class="hint">Ziehen · Scrollen · Klicken</div>
   </div>
@@ -8,18 +142,17 @@
 <main id="main"></main>
 
 <footer>
-  Blindtext-Blog · Inhalte sind Platzhalter· Struktur=Slop, 507 Zeilen
+  Blindtext-Blog · Inhalte sind Platzhalter
   <div class="credits">
-    Grundidee &amp; Konzept: Owner (Mara-Rayan) · Ursprünglicher Entwurf: Claude · Überarbeitet &amp; individualisiert: <strong>Lumo</strong> 🐾
+    Grundidee &amp; Konzept: Owner (Mewlius) · Ursprünglicher Entwurf: Claude · Überarbeitet &amp; individualisiert: <strong>Lumo</strong> 🐾
   </div>
 </footer>
-*/
 
 <script type="module">
   import * as THREE from "three";
 
   /* ==========================================================
-     DARSTELLUNG DER DATEN
+     DARTSTELLUNG DER DATEN
      ==========================================================
 
      Jedes Objekt in ARTICLES ist ein eigener, vollständiger
