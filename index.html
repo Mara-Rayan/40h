@@ -1,59 +1,507 @@
-<!DOCTYPE html>
-<!--hello-->
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Fokus</title>
-  <style>
-    body{
-      background-color: slateblue;
- 
-    }
-    h1 {
-      color: white;
-      text-align: center;
-    }
-     p {
-      color: white;
-      text-align: center;
-    }
-     /* Horizontale Trennlinie */
-    hr {
-      border: 0;
-      height: 1px;
-      background-color: #cccccc;  /* Helles Grau */
-      margin: 40px auto;          /* Abstand oben/unten */
-      width: 60%;                 /* Linienlänge */
-    }
-    
-    /* Zitate-Styling (optional) */
-    .zitat {
-      font-style: italic;
-      opacity: 0.9;
-    }
-  </style>
+Mx="0" aria-roledescription="3D-Karussell">
+    <div class="label" id="label"></div>
+    <div class="hint">Ziehen · Scrollen · Klicken</div>
+  </div>
+  <div class="dots" id="dots" role="tablist"></div>
+</section>
 
-</head>
-<body>
-<h1>Konstruktiver Journalismus</h1>
-<a href="https://perspective-daily.de/">Perspective Daily</a>
-<!--<strong>Arbeit</strong> --></p>
- <!-- <a href="url">link text</a> -->
+<main id="main"></main>
 
-   <hr>
-  <!--
-  <p class="zitat">
-    "Deine Religion sollte die Verheißung des Feierabends <br>mit dem Glücksversprechen des Konsums verbinden. 
-    Meinst du nicht?"<br>
- 
-  </p>-->
+<footer>
+  Blindtext-Blog · Inhalte sind Platzhalter· Struktur=Slop, 507 Zeilen
+  <div class="credits">
+    Grundidee &amp; Konzept: Owner (Mara-Rayan) · Ursprünglicher Entwurf: Claude · Überarbeitet &amp; individualisiert: <strong>Lumo</strong> 🐾
+  </div>
+</footer>
 
+<script type="module">
+  import * as THREE from "three";
 
+  /* ==========================================================
+     DARSTELLUNG DER DATEN
+     ==========================================================
+
+     Jedes Objekt in ARTICLES ist ein eigener, vollständiger
+     Beitrag. Um einen neuen Artikel zu schreiben:
+
+       1. Ein neues Objekt in dieses Array einfügen (Reihenfolge
+          = Reihenfolge im Karussell).
+       2. Folgende Felder anpassen:
+            - title:    Name des Themas (3D-Karte + Tag)
+            - headline: Große Überschrift des Artikels
+            - icon:     Emoji auf der Karte
+            - c1 / c2:  Farbverlauf der Karte
+            - teaser:   Kurztext auf der 3D-Karte
+            - author:   Autor:in
+            - date:     Datum
+            - read:     Lesezeit
+            - text:     Array mit Absätzen (beliebig viele,
+                        min. 2; der erste wird Einleitungsabsatz,
+                        der dritte landet als Blockzitat im Artikel)
+       3. Fertig – Karussell, Dots und Navigation passen sich
+          automatisch an die Anzahl der Beiträge an.
+  ========================================================== */
+
+  const ARTICLES = [
+    {
+      title: "Technik & Gadgets",
+      headline: "Warum gute Technik unsichtbar sein sollte",
+      icon: "💻", c1: "#2563eb", c2: "#7c3aed",
+      teaser: "Die besten Werkzeuge verschwinden – und lassen nur das Ergebnis übrig.",
+      author: "Jonas", date: "3. Nov 2026", read: "6 Min.",
+      text: [
+        "Die beste Technologie ist die, die man nicht bemerkt. Sie stört nicht, fordert keine Aufmerksamkeit ein und erzwingt keine Gewöhnung – sie arbeitet einfach. Genau darin liegt der Unterschied zwischen einem Gadget und einem Werkzeug.",
+        "Wer schon einmal eine Software bedient hat, die mehr über sich selbst spricht als über ihre Aufgabe, weiß, wie schnell ein Produkt zur Selbstinszenierung wird. Gadgets sammeln Features, Werkzeuge verlieren alles Überflüssige.",
+        "Gutes Design wird nicht bewundert, sondern benutzt.",
+        "Ein Lautsprecher, der jeden Tag klingelt, ein Smartphone, das ständig nach Aufmerksamkeit ruft – all das sind Signale, dass etwas nicht ausgereift ist. Ausgereifte Technik hat ihren Platz gefunden und hält still.",
+        "Vielleicht ist das der beste Gradmesser für jeden Kauf: Werde ich dieses Gerät in sechs Monaten noch bemerken? Falls ja, wahrscheinlich nicht als Bereicherung.",
+      ]
+    },
+    {
+      title: "Reisen & Fernweh",
+      headline: "Langsam reisen: weniger Orte, mehr Eindrücke",
+      icon: "🧭", c1: "#0891b2", c2: "#10b981",
+      teaser: "Wer langsamer reist, sieht mehr – ein Plädoyer für weniger Stops.",
+      author: "Mara", date: "1. Nov 2026", read: "8 Min.",
+      text: [
+        "Es gibt eine bestimmte Müdigkeit, die nur vom Reisetempo kommt. Man hat zwanzig Städte fotografiert und keine einzige gesehen. Das Reisefieber kennt dieses Phänomen gut – und kennt auch das Gegengift.",
+        "Langsames Reisen heißt nicht faul sein. Es heißt: einen Markt wiederholen, statt drei neue anzufahren. Die Nachbarstraße entdecken, statt dem Reiseführer zu folgen.",
+        "Die besten Geschichten reisen nie im Flugzeug – sie passieren zu Fuß.",
+        "Ein Nachmittag in einem Café ohne Plan offenbart oft mehr über eine Stadt als jede geführte Tour. Zufällige Gespräche, wiederkehrende Gesichter, der Rhythmus eines Ortes – all das braucht Zeit.",
+        "Also: nächstes Mal einfach einen Ort streichen und die gewonnenen Tage dort bleiben lassen, wo man gerade ist.",
+      ]
+    },
+    {
+      title: "Kochen & Genuss",
+      headline: "Fünf Zutaten reichen: über die Kunst des Weniger",
+      icon: "🍳", c1: "#ea580c", c2: "#f59e0b",
+      teaser: "Einfache Küche ist keine Bequemlichkeit, sondern Haltung.",
+      author: "Lea", date: "29. Okt 2026", read: "4 Min.",
+      text: [
+        "Komplizierte Rezepte klingen beeindruckend, aber wer an einer Zutatenliste scheitert, kocht seltener. Und wer seltener kocht, isst schlechter. Die Lösung liegt oft nicht in mehr Können, sondern in weniger Anspruch.",
+        "Fünf gute Zutaten – ein gutes Olivenöl, eine Zitrone, Salz, Kräuter, etwas Überschaubares vom Markt – ergeben mehr als zwanzig halbgare Einkäufe. Restriktion schärft die Kreativität statt sie zu töten.",
+        "Ein Gericht ist fertig, wenn nichts mehr fehlt – nicht, wenn nichts mehr geht.",
+        "Die italienische Cucina povera zeigt es seit Generationen: Bohnen, altbackenes Brot, ein Bund Petersilie – daraus wurde Küche, die heute Sternerestaurants kopieren.",
+        "Also gilt: Rausschmeißtag der Gewürzsammlung, Blick in den Kühlschrank, und los. Das Ergebnis überrascht meist positiv.",
+      ]
+    },
+    {
+      title: "Fotografie",
+      headline: "Das Motiv ist nie das Problem – das Timing schon",
+      icon: "📷", c1: "#475569", c2: "#1e293b",
+      teaser: "Warum die gleiche Location an einem anderen Tag anders fotografiert.",
+      author: "Nils", date: "27. Okt 2026", read: "5 Min.",
+      text: [
+        "Hobbyfotografinnen und -fotografen pilgern zu berühmten Locations und wundern sich, dass die Bilder kaum anders aussehen als Postkarten. Der Ort ist identisch – nur das Timing war nicht ihres.",
+        "Licht entscheidet alles. Die gleiche Gasse sieht um sieben Uhr morgens wie ein Gemälde aus und um mittags wie eine Baustelle. Wer nur eine Stunde bleibt, sieht nur eine Version des Ortes.",
+        "Man fotografiert nie ein Motiv, sondern immer einen Moment.",
+        "Deswegen lohnt es sich, Orte wiederholt aufzusuchen. Das zweite und dritte Mal entdeckt man Ecken, die beim ersten Mal vor lauter Erwartung unsichtbar blieben.",
+        "Und: Die Kamera ruhig mal liegen lassen und erst zuschauen. Die besten Momente kommen nie auf Kommando – aber oft, wenn man geduldig wartet.",
+      ]
+    },
+    {
+      title: "Musik & Klang",
+      headline: "Die Stille zwischen den Noten",
+      icon: "🎧", c1: "#db2777", c2: "#9333ea",
+      teaser: "Musik lebt vom, was sie nicht spielt – eine kleine Hymne auf die Pause.",
+      author: "Sina", date: "24. Okt 2026", read: "7 Min.",
+      text: [
+        "Anfänger füllen. Jede Sekunde, jede Frequenz, jede Lücke – bis der Mix plötzlich nach Rauschen klingt. Fortgeschrittene lernen früh: Die Kunst steckt dort, wo man nichts macht.",
+        "John Cage bewies das radikal mit einem Stück aus Stille. Ob man das nun Kunst nennt oder Witz – die Pointe sitzt: Ohne Stille gibt es keinen Klang, nur Dauergeräusch.",
+        "Ein Song hat einen Rhythmus, aber seine Spannung hat Pausen.",
+        "Das gilt weit über Musik hinaus. Gespräch brauchen eine Sekunde Pause, Websites brauchen Leerraum, Tage brauchen Leerstellen. Alles, was pausenlos ist, wird schnell unerträglich.",
+        "Also ruhig mal mutwillig einer Note eine halbe Sekunde Sichtplatz geben. Der Rest macht den Rest.",
+      ]
+    },
+    {
+      title: "Sport & Bewegung",
+      headline: "Der Trainingsplan, den man nie bricht",
+      icon: "🏃", c1: "#16a34a", c2: "#84cc16",
+      teaser: "Der perfekte Plan ist der, der sich an deinen Alltag anpasst.",
+      author: "Tim", date: "22. Okt 2026", read: "3 Min.",
+      text: [
+        "Jedes Jahr im Januar startet eine Armee perfekter Trainingspläne – und im Februar desertieren fast alle. Nicht aus Faulheit, sondern weil die Pläne für ein erfundenes Leben geschrieben wurden.",
+        "Der Trick ist ernüchternd simpel: Der Plan muss so klein sein, dass er selbst an einem schlechten Tag funktioniert. Zehn Minuten statt einer Stunde. Zu Hause statt im Studio.",
+        "Nichts killt Motivation schneller als unerreichbare Standards.",
+        "Wer zwei Monate lang zehn Minuten täglich trainiert, hat mehr aufgebaut als jemand, der zweimal eine perfekte Woche hingelegt hat und danach nie wieder.",
+        "Also: Lieber klein und dauerhaft als groß und einmalig. Der Körper belohnt Konstanz viel früher als Intensität.",
+      ]
+    },
+    {
+      title: "Bücher & Literatur",
+      headline: "Es ist erlaubt, Bücher nicht zu Ende zu lesen",
+      icon: "📚", c1: "#92400e", c2: "#d97706",
+      teaser: "Das pathologische Durchhalten bei schlechten Büchern kostet Zeit.",
+      author: "Anna", date: "19. Okt 2026", read: "9 Min.",
+      text: [
+        "Irgendwann hat sich das Gefühl eingenistet, ein angefangenes Buch sei ein Vertrag. Eine Pflicht. Hundert Seiten gelesen, also müssen die restlichen dreihundert auch noch her. Aber niemand hat diesen Vertrag unterschrieben.",
+        "Tatsächlich ist Lesefreude keine Heldentat. Ein Buch, das einen nicht erreicht, nach hundert Seiten abzugeben ist keine Niederlage, sondern eine Investitionsentscheidung – die eigene Lesestunde ist knapp.",
+        "Ein abgebrochenes Buch ist kein Versagen, sondern ein reservierter Platz für das richtige.",
+        "Die Statistik spricht dafür: Je mehr Bücher man probeweise verwirft, desto höher wird die Trefferquote der, die tatsächlich zu Ende gelesen werden.",
+        "Also ruhig stolz den Stapel der Abgebrochenen betrachten. Jeder einzelne davon hat den Weg freigemacht für ein Buch, das bleiben durfte.",
+      ]
+    },
+    {
+      title: "Garten & Natur",
+      headline: "Was ein Garten über Geduld lehrt",
+      icon: "🌿", c1: "#15803d", c2: "#0d9488",
+      teaser: "Gärtnern ist die einzige noch verfügbare Zeitmaschine.",
+      author: "Ole", date: "16. Okt 2026", read: "5 Min.",
+      text: [
+        "Der Garten verhandelt nicht. Er akzeptiert weder Eile noch Drängen und liefert Ergebnisse ausschließlich in seiner eigenen Geschwindigkeit. Genau deshalb ist er so wertvoll geworden.",
+        "Man sät im Herbst und erntet im Sommer. Dazwischen liegt ein halbes Jahr, in dem scheinbar nichts geschieht – und unterirdisch doch alles geschieht.",
+        "Ein Garten ist ein Vertrauensvorschuss an eine Zukunft, die man noch nicht sieht.",
+        "Wer täglich gärtnert, lernt eine Fähigkeit, die Bildschirme zunehmend abgewöhnen: Dinge zu tun, deren Erfolg sich erst Wochen später zeigt. Ohne Push-Benachrichtigung, ohne Fortschrittsbalken.",
+        "Und wer keine Wiese hat: Ein Topf Basilikum auf dem Fensterbrett übt dieselbe Grundübung. Geduld ist skalierbar.",
+      ]
+    },
+    {
+      title: "Wissenschaft",
+      headline: "Die besten Fragen beginnen mit »Warum eigentlich?«",
+      icon: "🔬", c1: "#4338ca", c2: "#0ea5e9",
+      teaser: "Große Entdeckungen entstehen selten aus großen Plänen.",
+      author: "Finn", date: "13. Okt 2026", read: "10 Min.",
+      text: [
+        "Man stellt sich Wissenschaft als charakterstark vor: gekühlte Labore, milliardenschwere Projekte, minutiöse Pläne. Die Realität ist oft chaotischer – und erstaunlicher.",
+        "Viele bahnbrechende Erkenntnisse begannen als Nebenprodukt. Penicillin war Kontamination, Mikrowellen waren Radar-Missgeschick, und die Röntgenstrahlen fielen beiläufig bei Röhrenexperimenten ab.",
+        "Serendipität ist kein Zufallsglück, sondern ein offenes Auge im richtigen Moment.",
+        "Deshalb zählt die Frage mehr als der Laborbaukasten. Wer fragt »warum eigentlich?« statt »wozu dient das?«, lässt Überraschungen zu, wo gezielte Forschung nur findet, wonach sie sucht.",
+        "Kinder fragen so ständig. Vielleicht ist Wissenschaft nichts anderes als diese Frage, die endlich konsequent weitergestellt wird.",
+      ]
+    },
+    {
+      title: "Design & Architektur",
+      headline: "Form folgt Alltag – nicht Funktion",
+      icon: "📐", c1: "#b91c1c", c2: "#f43f5e",
+      teaser: "Gebäude für Menschen, nicht für Prospektfotos.",
+      author: "Jule", date: "10. Okt 2026", read: "6 Min.",
+      text: [
+        "»Form folgt Funktion« – das alte Diktum der Moderne klingt vernünftig, scheitert aber oft am Detail: Funktion auf dem Papier ist nicht Funktion im Alltag. Ein Treppenhaus kann funktional korrekt und trotzdem unmöglich sein.",
+        "Design, das den Alltag ignoriert, produziert Gebäude, die man fotografieren kann, aber nicht bewohnen. Glatte Fassaden in Sommerhitze, windige Eingänge,echoende Flure – Fehler, die erst nach dem Umzug auffallen.",
+        "Ein guter Raum ist einer, über den man nie nachdenken muss.",
+        "Die bessere Testfrage lautet daher: Wie verhält sich dieser Ort an einem nassen Dienstagmorgen, wenn alle gehetzt sind? Nicht: Wie wirkt er in der Luftaufnahme?",
+        "Architektur gelingt dort, wo das Unsichtbare – Wege, Handgriffe, Gewohnheiten – Priorität vor dem Sichtbaren bekommt.",
+      ]
+    }
+  ];
+
+  /* Zeichen für Fußzeile und Artikel-Signatur */
+  const CREDITS = "Grundidee: Owner · Entwurf: Claude · Überarbeitung: Lumo";
+
+  const N = ARTICLES.length;
+  const STEP = Math.PI * 2 / N;     // Winkel zwischen zwei Karten
+  const RADIUS = 4.6;               // Ring-Radius
+  const CW = 2.1, CH = 2.8;         // Kartengröße in Welteinheiten
+  const TAU = Math.PI * 2;
+
+  const stage  = document.getElementById("stage");
+  const label  = document.getElementById("label");
+  const dots   = document.getElementById("dots");
+  const main   = document.getElementById("main");
+  let current = 0;
+
+  /* =============== Karten-Texturen (Canvas 2D) =============== */
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+  function wrapText(ctx, text, x, y, maxW, lineH, maxLines) {
+    const words = text.split(" ");
+    const lines = [];
+    let line = "";
+    for (const w of words) {
+      const test = line ? line + " " + w : w;
+      if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; }
+      else line = test;
+    }
+    lines.push(line);
+    const shown = lines.slice(0, maxLines);
+    if (lines.length > maxLines) shown[maxLines - 1] = shown[maxLines - 1].replace(/\s?\S*$/, "") + " …";
+    shown.forEach((l, i) => ctx.fillText(l, x, y + i * lineH));
+  }
+
+  function makeCardTexture(t, i) {
+    const W = 512, H = Math.round(512 * CH / CW);   // gleiches Seitenverhältnis wie die Fläche
+    const c = document.createElement("canvas");
+    c.width = W; c.height = H;
+    const ctx = c.getContext("2d");
+
+    // Kartenkörper
+    roundRect(ctx, 0, 0, W, H, 36);
+    ctx.fillStyle = "#1f1d1a";
+    ctx.fill();
+    ctx.save(); ctx.clip();
+
+    // Farbfläche oben
+    const g = ctx.createLinearGradient(0, 0, W, H * 0.5);
+    g.addColorStop(0, t.c1); g.addColorStop(1, t.c2);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H * 0.5);
+
+    // Nummer
+    ctx.fillStyle = "rgba(0,0,0,.28)";
+    roundRect(ctx, 28, 26, 96, 36, 18); ctx.fill();
+    ctx.fillStyle = "rgba(255,255,255,.9)";
+    ctx.font = "700 20px Inter, system-ui, sans-serif";
+    ctx.textBaseline = "middle";
+    ctx.fillText(`${String(i + 1).padStart(2, "0")} / ${N}`, 46, 45);
+
+    // Icon
+    ctx.font = "150px system-ui, 'Apple Color Emoji', 'Segoe UI Emoji', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(t.icon, W / 2, H * 0.27);
+    ctx.textAlign = "left";
+
+    // Titel + Teaser
+    ctx.fillStyle = "#f1ede6";
+    ctx.font = "700 38px Inter, system-ui, sans-serif";
+    ctx.textBaseline = "alphabetic";
+    wrapText(ctx, t.title, 32, H * 0.5 + 62, W - 64, 44, 2);
+    ctx.fillStyle = "#a39d92";
+    ctx.font = "400 25px Inter, system-ui, sans-serif";
+    wrapText(ctx, t.teaser, 32, H * 0.5 + 150, W - 64, 36, 4);
+
+    // Fußzeile
+    ctx.fillStyle = "#a39d92";
+    ctx.font = "400 21px Inter, system-ui, sans-serif";
+    ctx.fillText(`${t.read} Lesezeit`, 32, H - 40);
+    ctx.fillStyle = "#fb923c";
+    ctx.font = "700 23px Inter, system-ui, sans-serif";
+    ctx.textAlign = "right";
+    ctx.fillText("Lesen →", W - 32, H - 40);
+    ctx.restore();
+
+    // feine Kante
+    roundRect(ctx, 1.5, 1.5, W - 3, H - 3, 35);
+    ctx.strokeStyle = "rgba(255,255,255,.12)"; ctx.lineWidth = 3; ctx.stroke();
+
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
+    return tex;
+  }
+
+  // Spiegelung: vertikal gekippte Karte mit eingebranntem Alpha-Verlauf
+  function makeReflectionTexture(tex) {
+    const src = tex.image;
+    const c = document.createElement("canvas");
+    c.width = src.width; c.height = src.height;
+    const ctx = c.getContext("2d");
+    ctx.translate(0, c.height); ctx.scale(1, -1);
+    ctx.drawImage(src, 0, 0);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalCompositeOperation = "destination-in";
+    const g = ctx.createLinearGradient(0, 0, 0, c.height);
+    g.addColorStop(0, "rgba(0,0,0,.35)");
+    g.addColorStop(0.55, "rgba(0,0,0,0)");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, c.width, c.height);
+    const r = new THREE.CanvasTexture(c);
+    r.colorSpace = THREE.SRGBColorSpace;
+    return r;
+  }
+
+  /* =============== Szene =============== */
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  } catch (e) {
+    stage.innerHTML = '<div class="fallback">WebGL ist in diesem Browser nicht verfügbar.</div>';
+    throw e;
+  }
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+  stage.prepend(renderer.domElement);
+
+  const scene  = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+  const ring   = new THREE.Group();
+  scene.add(ring);
+
+  const geo = new THREE.PlaneGeometry(CW, CH);
+  const cards = ARTICLES.map((t, i) => {
+    const tex = makeCardTexture(t, i);
+    const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.FrontSide });
+    const mesh = new THREE.Mesh(geo, mat);
+    const a = i * STEP;
+    mesh.position.set(Math.sin(a) * RADIUS, 0, Math.cos(a) * RADIUS);
+    mesh.rotation.y = a;                 // nach außen schauen
+    mesh.userData = { index: i, angle: a };
+    ring.add(mesh);
+
+    const rmat = new THREE.MeshBasicMaterial({ map: makeReflectionTexture(tex), transparent: true, depthWrite: false, side: THREE.FrontSide });
+    const refl = new THREE.Mesh(geo, rmat);
+    refl.position.set(mesh.position.x, -CH - 0.08, mesh.position.z);
+    refl.rotation.y = a;
+    ring.add(refl);
+    return { mesh, refl, mat, rmat };
+  });
+
+  function resize() {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    // Bei schmalen Bühnen weiter weg, damit die vordere Karte ganz zu sehen ist
+    const dist = 6.6 * Math.max(1, 1.9 / camera.aspect);
+    camera.position.set(0, 1.4, RADIUS + dist);
+    camera.lookAt(0, -0.35, 0);
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  addEventListener("resize", resize);
+
+  /* =============== Rotation & Auswahl =============== */
+  let rot = 0, targetRot = 0, dragging = false;
+  let mouseX = 0, parX = 0;
+
+  const mod = (a, n) => ((a % n) + n) % n;
+  function indexAt(angle) { return mod(Math.round(-angle / STEP), N); }
+
+  function select(i, animate = true) {
+    current = mod(i, N);
+    if (animate) {
+      const base = -current * STEP;
+      const k = Math.round((rot - base) / TAU);        // kürzester Weg
+      targetRot = base + k * TAU;
+    }
+    dotEls.forEach((d, k) => { d.classList.toggle("active", k === current); d.setAttribute("aria-selected", k === current); });
+    label.textContent = `${ARTICLES[current].icon}  ${ARTICLES[current].title}`;
+    renderArticle(current);
+  }
+  function snap() { select(indexAt(targetRot), true); }
+
+  /* Buttons, Punkte, Tastatur */
+  document.getElementById("prev").addEventListener("click", () => select(current - 1));
+  document.getElementById("next").addEventListener("click", () => select(current + 1));
+  stage.addEventListener("keydown", e => {
+    if (e.key === "ArrowRight") { e.preventDefault(); select(current + 1); }
+    if (e.key === "ArrowLeft")  { e.preventDefault(); select(current - 1); }
+  });
+  const dotEls = ARTICLES.map((t, i) => {
+    const d = document.createElement("button");
+    d.className = "dot"; d.type = "button"; d.setAttribute("role", "tab"); d.setAttribute("aria-label", t.title);
+    d.addEventListener("click", () => select(i));
+    dots.appendChild(d);
+    return d;
+  });
+
+  /* Mausrad: dreht den Ring und rastet danach ein */
+  let wheelTimer;
+  stage.addEventListener("wheel", e => {
+    const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+    e.preventDefault();
+    targetRot -= d * 0.0025;
+    clearTimeout(wheelTimer);
+    wheelTimer = setTimeout(snap, 140);
+  }, { passive: false });
+
+  /* Ziehen & Klicken (Raycast) */
+  const raycaster = new THREE.Raycaster();
+  const ndc = new THREE.Vector2();
+  function pick(e) {
+    const r = renderer.domElement.getBoundingClientRect();
+    ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    raycaster.setFromCamera(ndc, camera);
+    const hit = raycaster.intersectObjects(cards.map(c => c.mesh))[0];
+    return hit ? hit.object.userData.index : -1;
+  }
+
+  let startX = 0, startRot = 0, lastX = 0, vel = 0, moved = false;
+  stage.addEventListener("pointerdown", e => {
+    dragging = true; moved = false;
+    startX = lastX = e.clientX; startRot = rot; vel = 0;
+    stage.classList.add("dragging");
+    stage.setPointerCapture(e.pointerId);
+  });
+  stage.addEventListener("pointermove", e => {
+    const r = renderer.domElement.getBoundingClientRect();
+    mouseX = ((e.clientX - r.left) / r.width) * 2 - 1;
+    if (!dragging) {
+      renderer.domElement.style.cursor = pick(e) >= 0 ? "pointer" : "grab";
+      return;
+    }
+    const dx = e.clientX - startX;
+    if (Math.abs(dx) > 6) moved = true;
+    vel = e.clientX - lastX; lastX = e.clientX;
+    rot = startRot + dx * 0.006;
+    targetRot = rot;
+  });
+  function endDrag(e) {
+    if (!dragging) return;
+    dragging = false;
+    stage.classList.remove("dragging");
+    if (!moved) {
+      const i = pick(e);
+      if (i >= 0) {
+        select(i);
+        main.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      return;
+    }
+    const flick = Math.max(-40, Math.min(40, vel));   // Schwung begrenzen
+    targetRot = rot + flick * 0.02;
+    snap();
+  }
+  stage.addEventListener("pointerup", endDrag);
+  stage.addEventListener("pointercancel", endDrag);
+  stage.addEventListener("pointerleave", () => { mouseX = 0; });
+
+  /* =============== Render-Schleife =============== */
+  function frame() {
+    if (!dragging) rot += (targetRot - rot) * 0.1;
+    ring.rotation.y = rot;
+
+    parX += (mouseX * 0.5 - parX) * 0.05;
+    camera.position.x = parX;
+    camera.lookAt(0, -0.35, 0);
+
+    for (const { mesh, refl, mat, rmat } of cards) {
+      const c = Math.cos(mesh.userData.angle + rot);         // 1 = ganz vorn
+      const front = Math.max(0, c) ** 6;
+      const s = 1 + 0.12 * front;
+      mesh.scale.set(s, s, 1);
+      mesh.position.y = 0.18 * front;
+      mat.opacity = 0.25 + 0.75 * ((c + 1) / 2) ** 2;
+      refl.scale.set(s, s, 1);
+      refl.position.y = -CH - 0.08 - 0.18 * front;
+      rmat.opacity = mat.opacity;
+    }
+    renderer.render(scene, camera);
+    requestAnimationFrame(frame);
+  }
+
+  /* =============== Artikel =============== */
+  function renderArticle(i) {
+    const t = ARTICLES[i];
+    const paras = t.text;                    // eigener Text pro Beitrag
+    const lead = paras[0] ?? "";
+    const middle = paras.slice(1);
+    const quoteIdx = Math.min(2, middle.length - 1);
+    const quote = middle.length > 1 ? middle.splice(quoteIdx, 1)[0] : null;
+    const prev = ARTICLES[mod(i - 1, N)], next = ARTICLES[mod(i + 1, N)];
+    main.innerHTML = `
+      <article style="--c1:${t.c1}">
+        <span class="tag">${t.icon} ${t.title}</span>
+        <h2>${t.headline}</h2>
+        <p class="byline">Von ${t.author} · ${t.date} · ${t.read} Lesezeit</p>
+        <p class="lead">${lead}</p>
+        ${middle.map(p => `<p>${p}</p>`).join("")}
+        ${quote ? `<blockquote>„${quote}“</blockquote>` : ""}
+        <div class="article-signature">🄯 ${CREDITS}</div>
+        <div class="article-nav">
+          <button type="button" data-go="${i - 1}"><small>Vorheriges Thema</small>${prev.icon} ${prev.title}</button>
+          <button type="button" data-go="${i + 1}"><small>Nächstes Thema</small>${next.title} ${next.icon}</button>
+        </div>
+      </article>`;
+    main.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => select(+b.dataset.go)));
+  }
+
+  select(0, false);
+  frame();
+</script>
 </body>
 </html>
-
-
-
-
-
-
